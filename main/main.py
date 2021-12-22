@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 
 import requests
-from flask import Flask, jsonify
+from flask import Flask, jsonify, abort
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
+
+import producer
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql://norkos:norkos@db/main'
@@ -38,7 +40,20 @@ def index():
 @app.route('/api/products/<int:id>/like', methods=['POST'])
 def like(id):
     req = requests.get('http://docker.for.linux.localhost:8000/api/user')
-    return jsonify(req.json())
+    json = req.json()
+
+    try:
+        product_user = ProductUser(user_id=json['id'], product_id=id)
+        db.session.add(product_user)
+        db.session.commit()
+
+        producer.publish('product_liked', id)
+    except Exception as e:
+        abort(400, 'You already liked this product')
+
+    return jsonify({
+        'message': "Success"
+    })
 
 
 if __name__ == '__main__':
