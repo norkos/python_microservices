@@ -1,6 +1,13 @@
-import pika, json
+import os
 
-params = pika.URLParameters('amqps://emeuxtkv:nO6QHNAsnc0ySVJYTkIEMLvtUsIB5-xi@roedeer.rmq.cloudamqp.com/emeuxtkv')
+import json
+import pika
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SECRET_KEY = str(os.getenv('RABBIT_KEY'))
+params = pika.URLParameters(SECRET_KEY)
 
 connection = pika.BlockingConnection(params)
 

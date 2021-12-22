@@ -3,7 +3,15 @@ import pika
 
 from main import Product, db
 
-params = pika.URLParameters('amqps://emeuxtkv:nO6QHNAsnc0ySVJYTkIEMLvtUsIB5-xi@roedeer.rmq.cloudamqp.com/emeuxtkv')
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
+
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+SECRET_KEY = str(os.getenv('RABBIT_KEY'))
+params = pika.URLParameters(SECRET_KEY)
 
 connection = pika.BlockingConnection(params)
 
