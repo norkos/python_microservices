@@ -37,17 +37,25 @@ def index():
     return jsonify(Product.query.all())
 
 
-@app.route('/api/products/<int:id>/like', methods=['POST'])
-def like(id):
-    req = requests.get('http://docker.for.linux.localhost:8000/api/user')
-    json = req.json()
+@app.route('/api/products/<int:product_id>/like', methods=['POST'])
+def like(product_id):
 
     try:
-        product_user = ProductUser(user_id=json['id'], product_id=id)
+        resp = requests.get('http://host.docker.internal:8000/api/user')
+        resp.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        return jsonify({
+            'message': err.response.status_code
+        })
+
+    json = resp.json()
+
+    try:
+        product_user = ProductUser(user_id=json['id'], product_id=product_id)
         db.session.add(product_user)
         db.session.commit()
 
-        producer.publish('product_liked', id)
+        producer.publish('product_liked', product_id)
     except Exception as e:
         abort(400, 'You already liked this product')
 
