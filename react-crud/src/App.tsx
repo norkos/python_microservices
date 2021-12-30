@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Main from "./main/Main";
 import ProductCreate from "./admin/ProductCreate";
+import ProductEdit from "./admin/ProductEdit";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
                   <Route path='/' exact component={Main}/>
                   <Route path='/admin/products/' exact component={Products}/>
                   <Route path='/admin/products/create' exact component={ProductCreate}/>
+                  <Route path='/admin/products/:id/edit' exact component={ProductEdit}/>
               </BrowserRouter>
 
     </div>
